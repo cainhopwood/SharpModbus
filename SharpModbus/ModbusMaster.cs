@@ -75,9 +75,23 @@ namespace SharpModbus
             return Execute(new ModbusF04ReadInputRegisters(slave, address, count)) as ushort[];
         }
 
+        public ushort[] ReadInputRegisters(byte slave, ushort address, ushort count, byte stationid)
+        {
+            var cmd = new ModbusF04ReadInputRegisters(slave, address, count);
+            cmd.StationId = stationid;
+            return Execute(cmd) as ushort[];
+        }
+
         public ushort[] ReadHoldingRegisters(byte slave, ushort address, ushort count)
         {
             return Execute(new ModbusF03ReadHoldingRegisters(slave, address, count)) as ushort[];
+        }
+
+        public ushort[] ReadHoldingRegisters(byte slave, ushort address, ushort count, byte stationid)
+        {
+            var cmd = new ModbusF03ReadHoldingRegisters(slave, address, count);
+            cmd.StationId = stationid;
+            return Execute(cmd) as ushort[];
         }
 
         public void WriteCoil(byte slave, ushort address, bool value)

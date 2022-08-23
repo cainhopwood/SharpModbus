@@ -5,6 +5,7 @@ namespace SharpModbus
     public class ModbusF16WriteRegisters : IModbusCommand
     {
         private readonly byte slave;
+        private byte stationid;
         private readonly ushort address;
         private readonly ushort[] values;
 
@@ -14,10 +15,16 @@ namespace SharpModbus
         public ushort[] Values { get { return ModbusHelper.Clone(values); } }
         public int RequestLength { get { return 7 + ModbusHelper.BytesForWords(values.Length); } }
         public int ResponseLength { get { return 6; } }
+        public byte StationId 
+        { 
+            get { return stationid; } 
+            set { stationid = value; } 
+        }
 
         public ModbusF16WriteRegisters(byte slave, ushort address, ushort[] values)
         {
             this.slave = slave;
+            this.stationid = slave; // normally same as slave, but can be overridden if required to avoid exceptions.
             this.address = address;
             this.values = values;
         }
@@ -32,7 +39,7 @@ namespace SharpModbus
 
         public object ParseResponse(byte[] response, int offset)
         {
-            Tools.AssertEqual(response[offset + 0], slave, "Slave mismatch got {0} expected {1}");
+            Tools.AssertEqual(response[offset + 0], stationid, "Slave mismatch got {0} expected {1}");
             Tools.AssertEqual(response[offset + 1], 16, "Function mismatch got {0} expected {1}");
             Tools.AssertEqual(ModbusHelper.GetUShort(response, offset + 2), address, "Address mismatch got {0} expected {1}");
             Tools.AssertEqual(ModbusHelper.GetUShort(response, offset + 4), values.Length, "Register count mismatch got {0} expected {1}");

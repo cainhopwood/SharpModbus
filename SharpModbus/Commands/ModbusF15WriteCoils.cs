@@ -5,6 +5,7 @@ namespace SharpModbus
     public class ModbusF15WriteCoils : IModbusCommand
     {
         private readonly byte slave;
+        private byte stationid;
         private readonly ushort address;
         private readonly bool[] values;
 
@@ -14,10 +15,16 @@ namespace SharpModbus
         public bool[] Values { get { return ModbusHelper.Clone(values); } }
         public int RequestLength { get { return 7 + ModbusHelper.BytesForBools(values.Length); } }
         public int ResponseLength { get { return 6; } }
+        public byte StationId 
+        { 
+            get { return stationid; } 
+            set { stationid = value; } 
+        }
 
         public ModbusF15WriteCoils(byte slave, ushort address, bool[] values)
         {
             this.slave = slave;
+            this.stationid = slave; // normally same as slave, but can be overridden if required to avoid exceptions.
             this.address = address;
             this.values = values;
         }

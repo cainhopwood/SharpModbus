@@ -5,6 +5,7 @@ namespace SharpModbus
     public class ModbusF05WriteCoil : IModbusCommand
     {
         private readonly byte slave;
+        private byte stationid;
         private readonly ushort address;
         private readonly bool value;
 
@@ -14,10 +15,16 @@ namespace SharpModbus
         public bool Value { get { return value; } }
         public int RequestLength { get { return 6; } }
         public int ResponseLength { get { return 6; } }
+        public byte StationId 
+        { 
+            get { return stationid; } 
+            set { stationid = value; } 
+        }
 
         public ModbusF05WriteCoil(byte slave, ushort address, bool state)
         {
             this.slave = slave;
+            this.stationid = slave; // normally same as slave, but can be overridden if required to avoid exceptions.
             this.address = address;
             this.value = state;
         }
@@ -34,7 +41,7 @@ namespace SharpModbus
 
         public object ParseResponse(byte[] response, int offset)
         {
-            Tools.AssertEqual(response[offset + 0], slave, "Slave mismatch got {0} expected {1}");
+            Tools.AssertEqual(response[offset + 0], stationid, "Slave mismatch got {0} expected {1}");
             Tools.AssertEqual(response[offset + 1], 5, "Function mismatch got {0} expected {1}");
             Tools.AssertEqual(ModbusHelper.GetUShort(response, offset + 2), address, "Address mismatch got {0} expected {1}");
             Tools.AssertEqual(response[offset + 4], ModbusHelper.EncodeBool(value), "Value mismatch got {0} expected {1}");

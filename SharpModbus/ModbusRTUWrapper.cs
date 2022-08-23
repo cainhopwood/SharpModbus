@@ -8,6 +8,11 @@ namespace SharpModbus
 
         public byte Code { get { return wrapped.Code; } }
         public byte Slave { get { return wrapped.Slave; } }
+        public byte StationId 
+        { 
+            get { return wrapped.StationId; }
+            set { wrapped.StationId = value; }
+        }
         public ushort Address { get { return wrapped.Address; } }
         public IModbusCommand Wrapped { get { return wrapped; } }
         public int RequestLength { get { return wrapped.RequestLength + 2; } }
@@ -67,7 +72,7 @@ namespace SharpModbus
             var code = response[offset + 1];
             if ((code & 0x80) != 0)
             {
-                Tools.AssertEqual(response[offset + 0], wrapped.Slave, "Slave mismatch got {0} expected {1}");
+                //Tools.AssertEqual(response[offset + 0], wrapped.Slave, "Slave mismatch got {0} expected {1}");
                 Tools.AssertEqual(code & 0x7F, wrapped.Code, "Code mismatch got {0} expected {1}");
                 var crc1 = ModbusHelper.CRC16(response, offset, 3);
                 //crc is little endian page 13 http://modbus.org/docs/Modbus_over_serial_line_V1_02.pdf

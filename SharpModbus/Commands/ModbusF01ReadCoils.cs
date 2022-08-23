@@ -5,6 +5,7 @@ namespace SharpModbus
     public class ModbusF01ReadCoils : IModbusCommand
     {
         private readonly byte slave;
+        private byte stationid;
         private readonly ushort address;
         private readonly ushort count;
 
@@ -14,10 +15,16 @@ namespace SharpModbus
         public ushort Count { get { return count; } }
         public int RequestLength { get { return 6; } }
         public int ResponseLength { get { return 3 + ModbusHelper.BytesForBools(count); } }
+        public byte StationId 
+        { 
+            get { return stationid; } 
+            set { stationid = value; } 
+        }
 
         public ModbusF01ReadCoils(byte slave, ushort address, ushort count)
         {
             this.slave = slave;
+            this.stationid = slave; // normally same as slave, but can be overridden if required to avoid exceptions.
             this.address = address;
             this.count = count;
         }
@@ -35,7 +42,7 @@ namespace SharpModbus
         public object ParseResponse(byte[] response, int offset)
         {
             var bytes = ModbusHelper.BytesForBools(count);
-            Tools.AssertEqual(response[offset + 0], slave, "Slave mismatch got {0} expected {1}");
+            Tools.AssertEqual(response[offset + 0], stationid, "Slave mismatch got {0} expected {1}");
             Tools.AssertEqual(response[offset + 1], 1, "Function mismatch got {0} expected {1}");
             Tools.AssertEqual(response[offset + 2], bytes, "Bytes mismatch got {0} expected {1}");
             return ModbusHelper.DecodeBools(response, offset + 3, count);

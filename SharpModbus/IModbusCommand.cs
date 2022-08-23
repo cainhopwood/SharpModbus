@@ -10,6 +10,7 @@ namespace SharpModbus
         ushort Address { get; }
         int RequestLength { get; }
         int ResponseLength { get; }
+        byte StationId { get; set; }
         void FillRequest(byte[] request, int offset);
         object ParseResponse(byte[] response, int offset);
         object ApplyTo(IModbusModel model);

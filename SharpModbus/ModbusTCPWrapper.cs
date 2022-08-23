@@ -9,6 +9,11 @@ namespace SharpModbus
 
         public byte Code { get { return wrapped.Code; } }
         public byte Slave { get { return wrapped.Slave; } }
+        public byte StationId 
+        { 
+            get { return wrapped.StationId; }
+            set { wrapped.StationId = value; }
+        }
         public ushort Address { get { return wrapped.Address; } }
         public IModbusCommand Wrapped { get { return wrapped; } }
         public ushort TransactionId { get { return transactionId; } }
